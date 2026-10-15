@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sports Auction Arena</title>
+<style>
+:root{--bg:#f3f5fb;--card:#fff;--tx:#14182b;--mu:#667;--ac:#4f46e5;--ok:#16a34a;--no:#dc2626;--bd:#dde1ef;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1220;--card:#1a1e33;--tx:#eef0fb;--mu:#98a;--bd:#2c3250;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1220;--card:#1a1e33;--tx:#eef0fb;--mu:#98a;--bd:#2c3250;color-scheme:dark}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:16px system-ui,sans-serif}
+header{padding:14px 16px 4px;display:flex;justify-content:space-between;align-items:center}
+h1{font-size:22px;margin:0}h2{margin:.2em 0 .5em;font-size:19px}
+nav{display:flex;gap:6px;overflow-x:auto;padding:8px 12px;position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);z-index:5}
+nav button{white-space:nowrap;background:var(--card);border:1px solid var(--bd);color:var(--tx);padding:10px 14px;border-radius:999px;font-size:15px}
+nav button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+main{padding:8px 12px 40px;max-width:1000px;margin:auto}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:14px;margin-bottom:12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.sports{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.sport{font-size:20px;padding:26px 10px;text-align:center;border-radius:18px;border:2px solid var(--bd);background:var(--card);color:var(--tx)}
+.sport b{display:block;font-size:44px}.sport.on{border-color:var(--ac)}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--ac);color:#fff;border:0;border-radius:12px;padding:13px 18px;font-weight:600;min-height:48px}
+.btn.g{background:var(--ok)}.btn.r{background:var(--no)}.btn.o{background:transparent;color:var(--tx);border:1px solid var(--bd)}
+.btn:disabled{opacity:.4}
+input,textarea,select{width:100%;padding:12px;border-radius:10px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);font:inherit;margin:4px 0 10px}
+label{font-size:14px;color:var(--mu)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.row>*{flex:1}
+.pl{display:flex;gap:12px;align-items:center}
+.av{width:64px;height:64px;flex:none;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;font-size:22px}
+.tag{display:inline-block;font-size:12px;padding:2px 8px;border-radius:99px;background:#f59e0b33;color:#b45309;margin-top:4px}
+.tag.u{background:#16a34a22;color:var(--ok)}
+.mu{color:var(--mu);font-size:14px}.big{font-size:44px;font-weight:800;color:var(--ac)}
+.teams{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.tb{background:var(--card);border:2px solid var(--bd);color:var(--tx);border-radius:14px;padding:12px;text-align:left}
+.tb.lead{border-color:var(--ok);background:#16a34a18}.tb:disabled{opacity:.45}
+.bar{height:8px;border-radius:9px;background:var(--bd);overflow:hidden}.bar i{display:block;height:100%;background:var(--ac)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:12px;padding:10px 12px}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#111;color:#fff;padding:12px 18px;border-radius:12px;display:none;z-index:9;max-width:90%}
+li{margin:6px 0}
+</style></head><body>
+<header><h1>🏆 Sports Auction Arena</h1><button class="btn o" onclick="theme()">🌓</button></header>
+<nav id="nav"></nav><main id="app"></main><div id="toast"></div>
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const SP={
+cricket:{n:'Cricket',e:'🏏',lab:['Matches','Average'],d:[['Arjun Vale','Sample Strikers','Batter',8,'38','44.1'],['Ravi Kestrel','Sample Strikers','Bowler',6,'41','22.3'],['Zane Holloway','Sample Royals','All-rounder',10,'52','35.0'],['Imran Tide','Sample Royals','Wicketkeeper',7,'33','31.5'],['Dev Marlowe','Sample Titans','Batter',9,'47','40.2'],['Kofi Brandt','Sample Titans','Bowler',5,'29','19.8'],['Sam Quill','Sample Kings','All-rounder',8,'36','29.4'],['Neil Ashcroft','Sample Kings','Bowler',4,'25','24.0']]},
+football:{n:'Football',e:'⚽',lab:['Games','Goals'],d:[['Luca Ferrand','Sample FC','Forward',12,'30','18'],['Mateo Brisk','Sample FC','Midfielder',9,'32','7'],['Idris Calder','Sample United','Defender',6,'34','2'],['Tomas Wren','Sample United','Goalkeeper',7,'31','0'],['Ezra Voss','Sample City','Forward',11,'28','15'],['Niko Daley','Sample City','Midfielder',8,'33','9'],['Jonas Pike','Sample Athletic','Defender',5,'29','1'],['Remy Oakes','Sample Athletic','Forward',10,'27','13']]},
+nba:{n:'NBA Basketball',e:'🏀',lab:['Games','Points/game'],d:[['Jalen Mercer','Sample Hawks','Guard',12,'70','24.5'],['Darius Knox','Sample Hawks','Forward',9,'66','17.2'],['Cole Ramsey','Sample Wolves','Center',10,'72','14.8'],['Tyrese Lane','Sample Wolves','Guard',8,'61','19.1'],['Marcus Fell','Sample Suns','Forward',11,'68','22.0'],['Andre Voss','Sample Suns','Guard',6,'58','11.3'],['Eli Barrett','Sample Bulls','Center',7,'64','12.6'],['Noah Quinn','Sample Bulls','Forward',5,'55','9.4']]}};
+let S;try{S=JSON.parse(localStorage.getItem('saa1'))}catch(e){}
+S=S||{view:'home',sport:null,cfg:{room:'My Auction Room',n:4,budget:100,names:[]},teams:[],players:[],cur:null,bid:0,bidder:null,hist:[]};
+const save=()=>{try{localStorage.setItem('saa1',JSON.stringify(S))}catch(e){}};
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+function theme(){const r=document.documentElement;r.dataset.theme=(r.dataset.theme||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'))==='dark'?'light':'dark'}
+function toast(m){const t=$('#toast');t.textContent=m;t.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>t.style.display='none',2200)}
+const sp=()=>SP[S.sport]||SP.cricket;
+const rem=t=>t.budget-t.spent;
+const pid=id=>S.players.find(p=>p.id===id);
+function av(p){let h=0;for(const c of p.name)h=(h*31+c.charCodeAt(0))%360;const i=p.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();return `<div class="av" style="background:linear-gradient(135deg,hsl(${h},65%,48%),hsl(${(h+50)%360},65%,38%))">${esc(i)}</div>`}
+function card(p,x=''){const L=sp().lab;return `<div class="card"><div class="pl">${av(p)}<div><b>${esc(p.name)}</b><div class="mu">${sp().e} ${sp().n} · ${esc(p.team)} · ${esc(p.role)}</div><div class="mu">${L[0]}: ${esc(p.stats[0]||'–')} · ${L[1]}: ${esc(p.stats[1]||'–')}</div><span class="tag ${p.sample?'':'u'}">${p.sample?'SAMPLE DATA – fictional':'User-entered stats'}</span></div></div><div class="mu" style="margin-top:8px">Base price: ${p.base}M ${p.status==='sold'?'· SOLD '+p.price+'M':p.status==='unsold'?'· UNSOLD':''}</div>${x}</div>`}
+const TABS=[['home','🏠 Sport'],['setup','⚙️ Room'],['players','👥 Players'],['auction','🔨 Auction'],['squads','📋 Squads'],['history','🕘 History'],['help','❓ Help']];
+function go(v){S.view=v;render()}
+function pick(k){S.sport=k;S.players=SP[k].d.map(r=>({id:uid(),name:r[0],team:r[1],role:r[2],base:r[3],stats:[r[4],r[5]],sample:true,status:'pool'}));S.teams=[];S.cur=null;S.bidder=null;S.hist=[];S.view='setup';render()}
+function setN(v){S.cfg.n=Math.max(2,Math.min(8,+v||2));render()}
+function start(){const c=S.cfg,B=Math.max(1,+c.budget||100);S.teams=Array.from({length:c.n},(_,i)=>({name:((c.names[i]||'').trim()||'Team '+(i+1)),budget:B,spent:0,squad:[]}));S.players.forEach(p=>{p.status='pool';delete p.price;delete p.owner});S.hist=[];S.cur=null;S.bidder=null;S.view='auction';render()}
+function reset(){if(!confirm('Reset this auction? All sales will be cleared.'))return;start()}
+function addPlayers(){const ta=$('#imp');const L=ta.value.split('\n').map(l=>l.trim()).filter(Boolean);let n=0;L.forEach(l=>{const a=l.split(',').map(s=>s.trim());if(!a[0])return;S.players.push({id:uid(),name:a[0],team:a[1]||'Free agent',role:a[2]||'Player',base:Math.max(1,+a[3]||1),stats:[a[4]||'',a[5]||''],sample:false,status:'pool'});n++});ta.value='';toast(n+' player(s) added');render()}
+function delP(id){S.players=S.players.filter(p=>p.id!==id);render()}
+function clearP(){if(confirm('Remove ALL players and start your own list?')){S.players=[];S.cur=null;S.bidder=null;render()}}
+function back(id){const p=pid(id);p.status='pool';render()}
+function sel(id){const p=pid(id);S.cur=id;S.bid=p.base;S.bidder=null;render()}
+function tbid(i){if(S.cur==null)return;const t=S.teams[i];if(S.bidder===null){if(rem(t)<S.bid)return toast(t.name+' cannot afford '+S.bid+'M');S.bidder=i}else if(S.bidder===i){return toast(t.name+' already leads')}else{const nb=S.bid+1;if(rem(t)<nb)return toast(t.name+' has only '+rem(t)+'M left');S.bid=nb;S.bidder=i}render()}
+function inc(n){if(S.bidder===null)return toast('Tap a team first to open the bidding');const t=S.teams[S.bidder];if(S.bid+n>rem(t))return toast('Over budget! '+t.name+' has '+rem(t)+'M');S.bid+=n;render()}
+function sold(){if(S.bidder===null)return toast('No bidder yet');const p=pid(S.cur),t=S.teams[S.bidder];p.status='sold';p.price=S.bid;p.owner=S.bidder;t.spent+=S.bid;t.squad.push(p.id);S.hist.unshift({k:'sold',p:p.name,t:t.name,v:S.bid,at:new Date().toLocaleTimeString()});toast(p.name+' SOLD to '+t.name+' for '+S.bid+'M 🎉');S.cur=null;S.bidder=null;render()}
+function unsold(){const p=pid(S.cur);p.status='unsold';S.hist.unshift({k:'unsold',p:p.name,at:new Date().toLocaleTimeString()});S.cur=null;S.bidder=null;render()}
+function nav(){$('#nav').innerHTML=TABS.map(t=>`<button class="${S.view===t[0]?'on':''}" onclick="go('${t[0]}')">${t[1]}</button>`).join('')}
+const V={
+home:()=>`<h2>Choose your sport</h2><div class="sports">${Object.entries(SP).map(([k,s])=>`<button class="sport ${S.sport===k?'on':''}" onclick="${S.sport&&S.sport!==k&&S.teams.length&&!confirm('Switching sport loads new sample players and clears the auction. Continue?')?'':`pick('${k}')`}"><b>${s.e}</b>${s.n}</button>`).join('')}</div><p class="mu">Demo players are <b>fictional sample data</b>. Replace them with your own list in the Players tab.</p>`,
+setup:()=>{const c=S.cfg;return `<div class="card"><h2>${sp().e} Auction room</h2><label>Room name</label><input value="${esc(c.room)}" oninput="S.cfg.room=this.value"><div class="row"><div><label>Number of teams (2–8)</label><input type="number" min="2" max="8" value="${c.n}" onchange="setN(this.value)"></div><div><label>Starting budget (M)</label><input type="number" min="1" value="${c.budget}" oninput="S.cfg.budget=+this.value"></div></div><label>Team names</label>${Array.from({length:c.n},(_,i)=>`<input placeholder="Team ${i+1}" value="${esc(c.names[i]||'')}" oninput="S.cfg.names[${i}]=this.value">`).join('')}<button class="btn g" onclick="start()">🚀 ${S.teams.length?'Restart auction with these settings':'Create room & start'}</button></div>`},
+players:()=>`<div class="row"><button class="btn o" onclick="clearP()">🗑 Clear list</button></div><div class="card" style="margin-top:10px"><h2>Add custom players</h2><p class="mu">One per line: <b>Name, Team, Role, Base price, ${sp().lab[0]}, ${sp().lab[1]}</b><br>Only type statistics you have checked yourself – the app never invents any.</p><textarea id="imp" rows="4" placeholder="Jane Doe, My Club, Forward, 5, 20, 8"></textarea><button class="btn" onclick="addPlayers()">➕ Add players</button></div><div class="grid">${S.players.map(p=>card(p,p.status==='pool'?`<button class="btn r" style="margin-top:8px" onclick="delP('${p.id}')">Remove</button>`:p.status==='unsold'?`<button class="btn o" style="margin-top:8px" onclick="back('${p.id}')">↩ Return to pool</button>`:'')).join('')||'<p>No players yet.</p>'}</div>`,
+auction:()=>{if(!S.teams.length)return `<div class="card">Create a room first. <button class="btn" onclick="go('setup')">Go to Room</button></div>`;const pool=S.players.filter(p=>p.status==='pool');const p=S.cur&&pid(S.cur);
+let h=`<h2>${esc(S.cfg.room)}</h2>`;
+if(!p){h+=`<div class="card"><b>Select the next player</b> <span class="mu">(${pool.length} left)</span><div class="chips" style="margin-top:10px">${pool.map(q=>`<button class="chip" onclick="sel('${q.id}')">${esc(q.name)} · ${q.base}M</button>`).join('')||'<span class="mu">Auction finished! See Squads.</span>'}</div></div>`}
+else{const lead=S.bidder!==null?S.teams[S.bidder]:null;h+=card(p)+`<div class="card" style="text-align:center"><div class="mu">Current bid</div><div class="big">${S.bid}M</div><div>${lead?'Leading: <b>'+esc(lead.name)+'</b>':'No bids yet – tap a team to open at base price'}</div><div class="row" style="margin:12px 0">${[1,2,5,10].map(n=>`<button class="btn" onclick="inc(${n})">+${n}M</button>`).join('')}</div><div class="row"><button class="btn g" onclick="sold()">✅ SOLD</button><button class="btn r" onclick="unsold()">❌ UNSOLD</button></div></div>`}
+h+=`<div class="teams">${S.teams.map((t,i)=>`<button class="tb ${S.bidder===i?'lead':''}" ${p&&rem(t)<(S.bidder===null?S.bid:S.bid+1)&&S.bidder!==i?'disabled':''} onclick="tbid(${i})"><b>${esc(t.name)}</b><div class="mu">${rem(t)}M left · ${t.squad.length} players</div><div class="bar"><i style="width:${Math.max(0,rem(t)/t.budget*100)}%"></i></div></button>`).join('')}</div><p class="mu">Tap a team to bid for it (+1M if someone already leads). Use +buttons to raise the leader's bid. Bids above a team's budget are blocked.</p><button class="btn o" onclick="reset()">↺ Reset auction</button>`;return h},
+squads:()=>!S.teams.length?'<div class="card">No room yet.</div>':`<div class="grid">${S.teams.map(t=>`<div class="card"><h2>${esc(t.name)}</h2><div class="bar"><i style="width:${Math.max(0,rem(t)/t.budget*100)}%"></i></div><p>💰 Remaining <b>${rem(t)}M</b> of ${t.budget}M · spent ${t.spent}M · ${t.squad.length} bought</p><ul>${t.squad.map(id=>{const p=pid(id);return p?`<li>${esc(p.name)} <span class="mu">(${esc(p.role)}) – ${p.price}M</span></li>`:''}).join('')||'<li class="mu">No players yet</li>'}</ul></div>`).join('')}</div>`,
+history:()=>`<div class="card"><h2>Auction history</h2>${S.hist.map(e=>`<div style="padding:8px 0;border-bottom:1px solid var(--bd)">${e.k==='sold'?`✅ <b>${esc(e.p)}</b> → ${esc(e.t)} for <b>${e.v}M</b>`:`❌ <b>${esc(e.p)}</b> unsold`} <span class="mu">${e.at}</span></div>`).join('')||'<span class="mu">Nothing yet.</span>'}</div>`,
+help:()=>`<div class="card"><h2>README</h2><ol><li>Pick a sport, then set room name, teams and budget.</li><li>Auction tab: tap a player, tap a team to open bidding, use +1/+5/+10 to raise, then SOLD or UNSOLD.</li><li>Players tab: paste your own list (Name, Team, Role, Base price, stat1, stat2).</li><li>Squads and History show budgets, purchases and every result.</li></ol><p><b>About data:</b> all built-in players are fictional <b>sample data</b> with made-up numbers. Real statistics are never fetched or invented – enter only figures you have verified. Pictures are generated initials avatars.</p><p class="mu">Progress is saved in this browser automatically. No account, server or paid API needed. Budgets are in millions (M).</p></div>`};
+function render(){nav();$('#app').innerHTML=V[S.view]();save()}
+render();
+</script></body></html>
